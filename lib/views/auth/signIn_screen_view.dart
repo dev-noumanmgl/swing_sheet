@@ -4,6 +4,7 @@ import 'package:swing_sheet/core/constants/app_colors.dart';
 import 'package:swing_sheet/core/utils/textStyles.dart';
 import 'package:swing_sheet/core/utils/validationInputs.dart';
 import 'package:swing_sheet/views/auth/select_role_screen_view.dart';
+import 'package:swing_sheet/views/home/home_screen_view.dart';
 import 'package:swing_sheet/widgets/commonOutlinedButton.dart';
 import 'package:swing_sheet/widgets/inputTextField.dart';
 
@@ -92,17 +93,17 @@ class _SignInScreenViewState extends State<SignInScreenView> {
                         return;
                       }
 
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) =>
-                      //         HomeScreenView(isInstructor: false),
-                      //   ),
-                      // ).then((_) {
-                      //   _emailController.clear();
-                      //   _passwordController.clear();
-                      //   FocusScope.of(context).unfocus();
-                      // });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              HomeScreenView(isInstructor: false),
+                        ),
+                      ).then((_) {
+                        _emailController.clear();
+                        _passwordController.clear();
+                        FocusScope.of(context).unfocus();
+                      });
                     },
                     child: commonOutlinedButton(
                       context: context,
