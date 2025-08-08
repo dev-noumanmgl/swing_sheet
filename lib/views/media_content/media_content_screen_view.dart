@@ -2,6 +2,53 @@ import 'package:flutter/material.dart';
 import 'package:swing_sheet/core/constants/app_colors.dart';
 import 'package:swing_sheet/core/utils/textStyles.dart';
 
+// Fullscreen Image Viewer
+class FullScreenImageView extends StatelessWidget {
+  final String imagePath;
+
+  const FullScreenImageView({super.key, required this.imagePath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: GestureDetector(
+        onTap: () => Navigator.pop(context),
+        child: Center(
+          child: Hero(
+            tag: imagePath,
+            child: Image.asset(imagePath),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Dummy Video Viewer
+class FullScreenVideoView extends StatelessWidget {
+  final String title;
+
+  const FullScreenVideoView({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: Text(title, style: textStyleH2(Colors.white)),
+      ),
+      body: const Center(
+        child: Icon(Icons.play_circle_fill, size: 100, color: Colors.white),
+      ),
+    );
+  }
+}
+
+// Main Media Screen
 class MediaContentScreenView extends StatefulWidget {
   const MediaContentScreenView({super.key});
 
@@ -33,13 +80,22 @@ class _MediaContentScreenViewState extends State<MediaContentScreenView> {
       "type": "image",
       "thumbnail": "assets/images/media/photo2.jpg",
     },
+    
   ];
+
+  String? _getFilterType(String tab) {
+    if (tab == 'Photos') return 'image';
+    if (tab == 'Videos') return 'video';
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> filteredMedia = selectedTab == 'All'
+    final String? filterType = _getFilterType(selectedTab);
+
+    final filteredMedia = filterType == null
         ? mediaList
-        : mediaList.where((item) => item['type'] == selectedTab.toLowerCase()).toList();
+        : mediaList.where((item) => item['type'] == filterType).toList();
 
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -90,7 +146,7 @@ class _MediaContentScreenViewState extends State<MediaContentScreenView> {
                 itemCount: filteredMedia.length,
                 itemBuilder: (context, index) {
                   final media = filteredMedia[index];
-                  return _buildMediaCard(media);
+                  return _buildMediaCard(context, media);
                 },
               ),
             )
@@ -100,50 +156,73 @@ class _MediaContentScreenViewState extends State<MediaContentScreenView> {
     );
   }
 
-  Widget _buildMediaCard(Map<String, dynamic> media) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          )
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Stack(
-          children: [
-            Image.asset(
-              media['thumbnail'],
-              width: double.infinity,
-              height: 180,
-              fit: BoxFit.cover,
+  Widget _buildMediaCard(BuildContext context, Map<String, dynamic> media) {
+    return GestureDetector(
+      onTap: () {
+        if (media['type'] == 'image') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => FullScreenImageView(imagePath: media['thumbnail']),
             ),
-            if (media['type'] == 'video')
-              Positioned(
-                top: 70,
-                left: MediaQuery.of(context).size.width / 2 - 30,
-                child: Icon(Icons.play_circle_fill, size: 60, color: Colors.white70),
-              ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                color: Colors.black.withOpacity(0.5),
-                child: Text(
-                  media['title'],
-                  style: textStyleBold(Colors.white),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => FullScreenVideoView(title: media['title']),
+            ),
+          );
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            )
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Stack(
+            children: [
+              Hero(
+                tag: media['thumbnail'],
+                child: Image.asset(
+                  media['thumbnail'],
+                  width: double.infinity,
+                  height: 180,
+                  fit: BoxFit.cover,
                 ),
               ),
-            ),
-          ],
+              if (media['type'] == 'video')
+                Positioned(
+                  top: 70,
+                  left: MediaQuery.of(context).size.width / 2 - 30,
+                  child: const Icon(Icons.play_circle_fill,
+                      size: 60, color: Colors.white70),
+                ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  color: Colors.black.withOpacity(0.5),
+                  child: Text(
+                    media['title'],
+                    style: textStyleBold(Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
