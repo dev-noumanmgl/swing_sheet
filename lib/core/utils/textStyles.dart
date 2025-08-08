@@ -5,6 +5,10 @@ TextStyle textStyleBold(Color color) {
   return TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color);
 }
 
+TextStyle textStyleNavBar(Color color) {
+  return TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color);
+}
+
 TextStyle textStyleH2(Color color) {
   return TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: color);
 }

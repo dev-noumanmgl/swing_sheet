@@ -56,7 +56,7 @@ class _DashBoardNavigationBarState extends State<DashBoardNavigationBar> {
                           : Icon(modelData.alternateIcon,
                               size: 24, color:  AppColors.black.withOpacity(.4)),
                       Text(modelData.title!,
-                          style: textStyleBold(selectedIndex == index
+                          style: textStyleNavBar(selectedIndex == index
                               ? AppColors.black
                               : AppColors.black.withOpacity(.4)))
                     ],

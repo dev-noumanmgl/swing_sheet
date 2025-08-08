@@ -145,9 +145,9 @@ class _HomeScreenViewState extends State<HomeScreenView> {
                   text: TextSpan(
                     style: textStyleBold(AppColors.red),
                     children: [
-                      TextSpan(text: "Ryan J Reese | "),
+                      TextSpan(text: "Dev Nouman MGl | "),
                       TextSpan(
-                        text: "ryan.reese@factivetech.com",
+                        text: "dev.noumanmgl@gmail.com",
                         style: textStyleBold(AppColors.black),
                       ),
                     ],

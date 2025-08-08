@@ -71,192 +71,195 @@ class _BookingScreenViewState extends State<BookingScreenView> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Select Instructor:", style: textStyleH2(AppColors.black)),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: AppColors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.shade400),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.shade400),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: AppColors.green, width: 2),
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              ),
-              value: selectedInstructor,
-              hint: const Text(
-                "Choose an instructor",
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-              dropdownColor: AppColors.white,
-              icon: Icon(Icons.arrow_drop_down, color: AppColors.black),
-              items: instructors
-                  .map(
-                    (name) => DropdownMenuItem(
-                      value: name,
-                      child: Row(
-                        children: [
-                          Icon(Icons.person, color: AppColors.green, size: 20),
-                          const SizedBox(width: 10),
-                          Text(
-                            name,
-                            style: textStyleRegular(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedInstructor = value;
-                  selectedDay = null;
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-            if (selectedInstructor != null) ...[
-              Text(
-                "Available Booking Dates:",
-                style: textStyleH2(AppColors.black),
-              ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Select Instructor:", style: textStyleH2(AppColors.black)),
               const SizedBox(height: 8),
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: AppColors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade400),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade400),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.green, width: 2),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
-                child: TableCalendar(
-                  firstDay: DateTime.now().subtract(const Duration(days: 365)),
-                  lastDay: DateTime.now().add(const Duration(days: 365)),
-                  focusedDay: focusedDay,
-                  selectedDayPredicate: (day) => isSameDay(selectedDay, day),
-                  onDaySelected: (selected, focused) {
-                    setState(() {
-                      selectedDay = selected;
-                      focusedDay = focused;
-                    });
-                  },
-                  onPageChanged: (focused) {
-                    setState(() {
-                      focusedDay = focused;
-                    });
-                  },
-                  calendarStyle: CalendarStyle(
-                    todayDecoration: BoxDecoration(
-                      color: AppColors.black,
-                      shape: BoxShape.circle,
-                    ),
-                    selectedDecoration: BoxDecoration(
-                      color: AppColors.green,
-                      shape: BoxShape.circle,
-                    ),
-                    markerDecoration: BoxDecoration(
-                      color: AppColors.green,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  headerStyle: HeaderStyle(
-                    formatButtonVisible: false,
-                    titleCentered: true,
-                    leftChevronIcon: const Icon(Icons.chevron_left),
-                    rightChevronIcon: const Icon(Icons.chevron_right),
-                  ),
-                  calendarBuilders: CalendarBuilders(
-                    defaultBuilder: (context, day, focusedDay) {
-                      if (availableDates.contains(day)) {
-                        return Center(
-                          child: Container(
-                            width: 35,
-                            height: 35,
-                            decoration: BoxDecoration(
-                              color: AppColors.green,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                '${day.day}',
-                                style: TextStyle(color: AppColors.white),
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                      return null;
-                    },
-                  ),
+                value: selectedInstructor,
+                hint: const Text(
+                  "Choose an instructor",
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
-              ),
-              const SizedBox(height: 16),
-              if (selectedDay != null) ...[
-                Center(
-                  child: Text(
-                    "Available Time for ${selectedDay!.toLocal().toString().split(' ')[0]}:",
-                    style: textStyleBold(AppColors.black),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8.0,
-                  runSpacing: 8.0,
-                  children: timeSlots.map((slot) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                BookingDetailsConfirmationScreenView(
-                              instructorName: selectedInstructor!,
-                              bookingDate: selectedDay!,
-                              slotTiming: slot,
-                              location:
-                                  "Green Palms Golf Course 2422 W. Boulevard 90 Dallas, TX 74382",
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 8.0),
-                        decoration: BoxDecoration(
-                          color: AppColors.green,
-                          borderRadius: BorderRadius.circular(8.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.3),
-                              blurRadius: 5,
-                              offset: const Offset(0, 3),
+                dropdownColor: AppColors.white,
+                icon: Icon(Icons.arrow_drop_down, color: AppColors.black),
+                items: instructors
+                    .map(
+                      (name) => DropdownMenuItem(
+                        value: name,
+                        child: Row(
+                          children: [
+                            Icon(Icons.person, color: AppColors.green, size: 20),
+                            const SizedBox(width: 10),
+                            Text(
+                              name,
+                              style: textStyleRegular(),
                             ),
                           ],
                         ),
-                        child: Text(slot, style: textStyleBold(AppColors.white)),
                       ),
-                    );
-                  }).toList(),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedInstructor = value;
+                    selectedDay = null;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+              if (selectedInstructor != null) ...[
+                Text(
+                  "Available Booking Dates:",
+                  style: textStyleH2(AppColors.black),
                 ),
-              ],
-            ]
-          ],
+                const SizedBox(height: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: TableCalendar(
+                    firstDay: DateTime.now().subtract(const Duration(days: 365)),
+                    lastDay: DateTime.now().add(const Duration(days: 365)),
+                    focusedDay: focusedDay,
+                    selectedDayPredicate: (day) => isSameDay(selectedDay, day),
+                    onDaySelected: (selected, focused) {
+                      setState(() {
+                        selectedDay = selected;
+                        focusedDay = focused;
+                      });
+                    },
+                    onPageChanged: (focused) {
+                      setState(() {
+                        focusedDay = focused;
+                      });
+                    },
+                    availableGestures: AvailableGestures.none,
+                    calendarStyle: CalendarStyle(
+                      todayDecoration: BoxDecoration(
+                        color: AppColors.black,
+                        shape: BoxShape.circle,
+                      ),
+                      selectedDecoration: BoxDecoration(
+                        color: AppColors.green,
+                        shape: BoxShape.circle,
+                      ),
+                      markerDecoration: BoxDecoration(
+                        color: AppColors.green,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    headerStyle: HeaderStyle(
+                      formatButtonVisible: false,
+                      titleCentered: true,
+                      leftChevronIcon: const Icon(Icons.chevron_left),
+                      rightChevronIcon: const Icon(Icons.chevron_right),
+                    ),
+                    calendarBuilders: CalendarBuilders(
+                      defaultBuilder: (context, day, focusedDay) {
+                        if (availableDates.contains(day)) {
+                          return Center(
+                            child: Container(
+                              width: 35,
+                              height: 35,
+                              decoration: BoxDecoration(
+                                color: AppColors.green,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${day.day}',
+                                  style: TextStyle(color: AppColors.white),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                if (selectedDay != null) ...[
+                  Center(
+                    child: Text(
+                      "Available Time for: ${selectedDay!.toLocal().toString().split(' ')[0]}",
+                      style: textStyleBold(AppColors.black),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    children: timeSlots.map((slot) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  BookingDetailsConfirmationScreenView(
+                                instructorName: selectedInstructor!,
+                                bookingDate: selectedDay!,
+                                slotTiming: slot,
+                                location:
+                                    "Green Palms Golf Course 2422 W. Boulevard 90 Dallas, TX 74382",
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 8.0),
+                          decoration: BoxDecoration(
+                            color: AppColors.green,
+                            borderRadius: BorderRadius.circular(8.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                blurRadius: 5,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Text(slot, style: textStyleBold(AppColors.white)),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ]
+            ],
+          ),
         ),
       ),
     );
